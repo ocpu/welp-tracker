@@ -1,22 +1,18 @@
 {
   "name": "welp-tracker",
-  "version": "1.0.0",
-  "description": "",
+  "version": "1.1.0",
+  "description": "Tracks users how many time users use the word welp",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ocpu/welp-tracker.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/ocpu/welp-tracker/issues"
-  },
+  "repository": "ocpu/welp-tracker",
+  "author": "Martin Hövre <martin.hovre@opencubes.io>",
+  "license": "MIT",
+  "bugs": "https://github.com/ocpu/welp-tracker/issues",
   "homepage": "https://github.com/ocpu/welp-tracker#readme",
   "dependencies": {
-    "eris": "0.7.2"
+    "eris": "0.7.2",
+    "ioredis": "^3.2.2"
   }
 }

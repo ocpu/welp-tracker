@@ -1,0 +1,10 @@
+version: '3'
+services: 
+  db:
+    image: redis:2.8
+  
+  app:
+    build: .
+    env_file: .env
+    links:
+      - db

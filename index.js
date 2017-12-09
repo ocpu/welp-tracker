@@ -1,32 +1,16 @@
-const eris = require('eris')
-const fs = require('fs')
-const { resolve } = require('path')
-const { promisify } = require('util')
+const client = require('eris')(process.env.WELP_TRACKER_TOKEN)
+const redis = require('ioredis')(process.env.REDIS_HOST)
 
-const readFile = promisify(fs.readFile)
-const writeFile = promisify(fs.writeFile)
-
-const client = new eris(process.env["welp_tracker_token"])
-
-let welps = {
-    // userid: times
-}
-
-if (fs.existsSync(resolve(".", "welp.json"))) readFile(resolve(".", "welp.json"), "utf8").then(JSON.parse).then(welp => {
-    Object.getOwnPropertyNames(welp).forEach(id => {
-        if (id in welps) welps[id] += welp[id]
-        else welps[id] = welp[id]
-    })
-})
-
-client.on("messageCreate", msg => {
-    if (msg.content === "welp" && msg.author.id in welps) {
-        welps[msg.author.id]++
-        writeFile(resolve('.', 'welp.json'), JSON.stringify(welps), "utf-8")
-    }
-    if (msg.content === "!welp") {
-        client.createMessage(msg.channel.id, msg.author.mention + " has said \"welp\" " + welp + " time" + (welp !== 1 ? 's' : ''))
-    }
+client.on('messageCreate', async msg => {
+  if (msg.content.startsWith('!welp')) {
+    const welps = await redis.get(msg.author.id) || 0
+    return client.createMessage(msg.channel.id, `${msg.author.mention} has said welp ${welps} time${welps !== 1 ? 's' : ''}.`)
+  }
+  if (/\bwelp\b/.test(msg.content)) {
+    let counter = 0
+    for (const exp = /\bwelp\b/g; exp.exec(msg.content) !== null; counter++);
+    redis.incrby(msg.author.id, counter)
+  }
 })
 
 client.connect()
